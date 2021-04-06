@@ -1,10 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Row } from "react-bootstrap";
+import AlertBanner from "../common/AlertBanner";
 import ScoopOtions from "./ScoopOtions";
+import ToppingOptions from "./ToppingOptions";
 
 const Options = ({ optionsType }) => {
   const [items, setItems] = useState([]);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     axios
@@ -13,11 +16,13 @@ const Options = ({ optionsType }) => {
         setItems(res.data);
       })
       .catch((error) => {
-        //todo
+        setError(true);
       });
   }, [optionsType]);
 
-  const ItemComponent = optionsType === "scoops" ? ScoopOtions : null;
+  if (error) return <AlertBanner />;
+
+  const ItemComponent = optionsType === "scoops" ? ScoopOtions : ToppingOptions;
 
   const optionItems = items.map((item) => (
     <ItemComponent
@@ -26,6 +31,7 @@ const Options = ({ optionsType }) => {
       imagePath={item.imagePath}
     />
   ));
+
   return <Row>{optionItems}</Row>;
 };
 
